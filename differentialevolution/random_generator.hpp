@@ -34,7 +34,7 @@ inline int genintrand(double min, double max, bool upperexclusive = false) {
   int ret = 0;
   do
     ret = boost::math::round(genrand(min, max));
-  while (ret < min || ret > max || upperexclusive && ret == max);
+  while (ret < min || ret > max || (upperexclusive && ret == max));
   return ret;
 }
 }  // namespace de

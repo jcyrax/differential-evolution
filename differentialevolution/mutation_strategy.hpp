@@ -278,7 +278,7 @@ class mutation_strategy_1 : public mutation_strategy {
           (*pop[urn[0]]->vars())[j] +
           weight() * ((*pop[urn[1]]->vars())[j] - (*pop[urn[2]]->vars())[j]);
 
-      j = ++j % varCount();
+      j = (j + 1) % varCount();
       ++k;
     } while (genrand() < crossover() && k < varCount());
 
@@ -339,7 +339,7 @@ class mutation_strategy_2 : public mutation_strategy {
           weight() * ((*bestIt->vars())[j] - (*tmpInd->vars())[j]) +
           weight() * ((*pop[urn[1]]->vars())[j] - (*pop[urn[2]]->vars())[j]);
 
-      j = ++j % varCount();
+      j = (j + 1) % varCount();
       ++k;
     } while (genrand() < crossover() && k < varCount());
 
@@ -401,7 +401,7 @@ class mutation_strategy_3 : public mutation_strategy {
           (*bestIt->vars())[j] +
           jitter * ((*pop[urn[1]]->vars())[j] - (*pop[urn[2]]->vars())[j]);
 
-      j = ++j % varCount();
+      j = (j + 1) % varCount();
       ++k;
     } while (genrand() < crossover() && k < varCount());
 
@@ -459,13 +459,13 @@ class mutation_strategy_4 : public mutation_strategy {
     double factor(weight() + genrand() * (1.0 - weight()));
 
     do {
-      double jitter = (0.0001 * genrand() + weight());
+//      double jitter = (0.0001 * genrand() + weight());
 
       (*tmpInd->vars())[j] =
           (*pop[urn[0]]->vars())[j] +
           factor * ((*pop[urn[1]]->vars())[j] - (*pop[urn[2]]->vars())[j]);
 
-      j = ++j % varCount();
+      j = (j + 1) % varCount();
       ++k;
     } while (genrand() < crossover() && k < varCount());
 
@@ -525,7 +525,7 @@ class mutation_strategy_5 : public mutation_strategy {
           (*pop[urn[0]]->vars())[j] +
           dither() * ((*pop[urn[1]]->vars())[j] - (*pop[urn[2]]->vars())[j]);
 
-      j = ++j % varCount();
+      j = (j + 1) % varCount();
       ++k;
     } while (genrand() < crossover() && k < varCount());
 

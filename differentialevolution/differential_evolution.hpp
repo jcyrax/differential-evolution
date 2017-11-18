@@ -104,11 +104,11 @@ class differential_evolution {
         m_bestInd(m_pop1->best(minimize)),
         m_constraints(constraints),
         m_processors(processors),
-        m_minimize(minimize),
         m_terminationStrategy(terminationStrategy),
-        m_listener(listener),
         m_selectionStrategy(selectionStrategy),
-        m_mutationStrategy(mutationStrategy) {
+        m_mutationStrategy(mutationStrategy),
+        m_listener(listener),
+        m_minimize(minimize) {
     assert(processors);
     assert(constraints);
     assert(terminationStrategy);

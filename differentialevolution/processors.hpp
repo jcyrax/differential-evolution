@@ -370,9 +370,9 @@ class processor : boost::noncopyable {
             processor_listener_ptr listener)
       : m_of(processor_traits<T>::make(of)),
         m_indQueue(indQueue),
-        m_result(false),
         m_listener(listener),
-        m_index(index) {
+        m_index(index),
+        m_result(false) {
     assert(listener);
   }
 
