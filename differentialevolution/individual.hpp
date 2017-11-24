@@ -68,14 +68,24 @@ class individual {
    *
    * @param constraints
    */
-  void init(constraints_ptr constraints) {
-    assert(constraints);
-    assert(m_vars);
-    assert(m_vars->size() == constraints->size());
+    void init(constraints_ptr constraints)
+    {
+        assert(constraints);
+        assert(m_vars);
+        assert(m_vars->size() == constraints->size());
 
-    for (de::DVector::size_type j = 0; j < m_vars->size(); ++j)
-      (*m_vars)[j] = constraints->get_rand_value(j);
-  }
+        for (de::DVector::size_type j = 0; j < m_vars->size(); ++j)
+        {
+            if( (*constraints)[j]->init_to_default() )
+            {
+                (*m_vars)[j] = (*constraints)[j]->get_default_value();
+            }
+            else
+            {
+                (*m_vars)[j] = (*constraints)[j]->get_rand_value();
+            }
+        }
+    }
 
   /**
    * returns the cost

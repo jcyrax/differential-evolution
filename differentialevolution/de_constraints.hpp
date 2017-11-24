@@ -53,6 +53,8 @@ class constraint {
  public:
   virtual ~constraint() {}
 
+    virtual bool init_to_default() const { return false; };
+    virtual double get_default_value() const { return 0.0; };
   /**
    * returns a random value limited to the type and range of the
    * constraint
@@ -139,8 +141,27 @@ class range_constraint : public constraint {
  private:
   double m_min;
   double m_max;
+  double m_default;
+  bool m_init_to_default;
 
  public:
+
+    range_constraint(double min, double max, double default_value) : m_min(min), m_max(max), m_default(default_value), m_init_to_default(true)
+    {
+        assert(min <= max);
+        assert(default_value <= max);
+        assert(min <= default_value);
+    }
+
+    bool init_to_default() const
+    {
+        return m_init_to_default;
+    }
+
+    double get_default_value() const
+    {
+        return m_default;
+    }
   /**
    * constructor that takes the min and max limits of the range
    *
@@ -149,9 +170,10 @@ class range_constraint : public constraint {
    * @param min
    * @param max
    */
-  range_constraint(double min, double max) : m_min(min), m_max(max) {
-    assert(min <= max);
-  }
+    range_constraint(double min, double max) : m_min(min), m_max(max), m_init_to_default(false)
+    {
+        assert(min <= max);
+    }
 
   /**
    * returns the min limit of the range
@@ -180,6 +202,12 @@ class range_constraint : public constraint {
  */
 class real_constraint : public range_constraint {
  public:
+
+    real_constraint(double min, double max, double default_value) : range_constraint(min, max, default_value)
+    {
+        assert(min <= max);
+    }
+
   /**
    * constructor that takes the min and max limit of the real
    * constraint
@@ -261,6 +289,12 @@ class real_constraint : public range_constraint {
  */
 class int_constraint : public range_constraint {
  public:
+
+    int_constraint(double min, double max, double default_value) : range_constraint(min, max, default_value)
+    {
+        assert(min <= max);
+    }
+
   /**
    * constructor that takes the min and max limit of the integer
    * constraint
