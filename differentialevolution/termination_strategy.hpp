@@ -41,13 +41,8 @@ class termination_strategy {
    * @return bool return true to continue, or false to stop the
    *  	   optimization process
    */
-  virtual bool event(individual_ptr best, size_t genCount) = 0;
+  virtual bool check_termination(individual_ptr best, size_t genCount) = 0;
 };
-
-/**
- * A smart pointer to a TerminationStrategy
- */
-typedef boost::shared_ptr<termination_strategy> termination_strategy_ptr;
 
 /**
  * Basic implementation of a Termination Strategy: stop the
@@ -71,7 +66,7 @@ class max_gen_termination_strategy : public termination_strategy {
    */
   max_gen_termination_strategy(size_t maxGen) : m_maxGen(maxGen) {}
 
-  virtual bool event(individual_ptr best, size_t genCount) {
+  virtual bool check_termination(individual_ptr best, size_t genCount) {
     return genCount < m_maxGen;
   }
 };
