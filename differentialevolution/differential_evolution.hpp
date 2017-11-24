@@ -60,7 +60,7 @@ class differential_evolution {
   termination_strategy& m_terminationStrategy;
   selection_strategy_ptr m_selectionStrategy;
   mutation_strategy_ptr m_mutationStrategy;
-  listener_ptr m_listener;
+  listener& m_listener;
 
   const bool m_minimize;
 
@@ -95,7 +95,7 @@ class differential_evolution {
                          termination_strategy& terminationStrategy,
                          selection_strategy_ptr selectionStrategy,
                          mutation_strategy_ptr mutationStrategy,
-                         de::listener_ptr listener) try
+                         listener& listener) try
 
       : m_varCount(varCount),
         m_popSize(popSize),
@@ -112,7 +112,6 @@ class differential_evolution {
     assert(processors);
     assert(constraints);
     assert(selectionStrategy);
-    assert(listener);
     assert(mutationStrategy);
 
     assert(popSize > 0);
@@ -139,54 +138,58 @@ class differential_evolution {
    *
    * @author adrian (12/4/2011)
    */
-  void run() {
-    try {
-      m_listener->start();
-      individual_ptr bestIndIteration(m_bestInd);
+    void run()
+    {
+        try
+        {
+            m_listener.start();
+            individual_ptr bestIndIteration(m_bestInd);
 
-      for (size_t genCount = 0;
-           m_terminationStrategy.check_termination(m_bestInd, genCount); ++genCount) {
-        m_listener->startGeneration(genCount);
-        for (size_t i = 0; i < m_popSize; ++i) {
-          mutation_strategy::mutation_info mutationInfo(
-              (*m_mutationStrategy)(*m_pop1, bestIndIteration, i));
+            for (size_t genCount = 0; m_terminationStrategy.check_termination(m_bestInd, genCount); ++genCount)
+            {
+                m_listener.startGeneration(genCount);
+                for (size_t i = 0; i < m_popSize; ++i)
+                {
+                    mutation_strategy::mutation_info mutationInfo(
+                        (*m_mutationStrategy)(*m_pop1, bestIndIteration, i));
 
-          individual_ptr tmpInd(boost::tuples::get<0>(mutationInfo));
+                    individual_ptr tmpInd(boost::tuples::get<0>(mutationInfo));
 
-          tmpInd->ensureConstraints(m_constraints,
-                                    boost::tuples::get<1>(mutationInfo));
+                    tmpInd->ensureConstraints(m_constraints,
+                    boost::tuples::get<1>(mutationInfo));
 
-          // populate the queue
-          m_processors->push(tmpInd);
+                    // populate the queue
+                    m_processors->push(tmpInd);
 
-          // put temps in a temp vector for now (they are empty until
-          // processed), will be moved to the right place after processed
-          (*m_pop2)[i] = tmpInd;
+                    // put temps in a temp vector for now (they are empty until
+                    // processed), will be moved to the right place after processed
+                    (*m_pop2)[i] = tmpInd;
+                }
+
+                m_listener.startProcessors(genCount);
+                m_processors->start();
+                m_processors->wait();
+                m_listener.endProcessors(genCount);
+
+                // BestParentChildSelectionStrategy()( m_pop1, m_pop2, m_bestInd,
+                // m_minimize );
+                m_listener.startSelection(genCount);
+                (*m_selectionStrategy)(m_pop1, m_pop2, m_bestInd, m_minimize);
+                bestIndIteration = m_bestInd;
+
+                m_listener.endSelection(genCount);
+
+                m_listener.endGeneration(genCount, bestIndIteration, m_bestInd);
+            }
+
+            m_listener.end();
         }
-
-        m_listener->startProcessors(genCount);
-        m_processors->start();
-        m_processors->wait();
-        m_listener->endProcessors(genCount);
-
-        // BestParentChildSelectionStrategy()( m_pop1, m_pop2, m_bestInd,
-        // m_minimize );
-        m_listener->startSelection(genCount);
-        (*m_selectionStrategy)(m_pop1, m_pop2, m_bestInd, m_minimize);
-        bestIndIteration = m_bestInd;
-
-        m_listener->endSelection(genCount);
-
-        m_listener->endGeneration(genCount, bestIndIteration, m_bestInd);
-      }
-
-      BOOST_SCOPE_EXIT_TPL((m_listener)) { m_listener->end(); }
-      BOOST_SCOPE_EXIT_END
-    } catch (const processors_exception&) {
-      m_listener->error();
-      throw differential_evolution_exception();
+        catch (const processors_exception&)
+        {
+            m_listener.error();
+            throw differential_evolution_exception();
+        }
     }
-  }
 
   /**
    * returns the best individual resulted from the optimization
