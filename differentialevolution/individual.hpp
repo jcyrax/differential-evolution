@@ -68,7 +68,7 @@ class individual {
    *
    * @param constraints
    */
-    void init(constraints_ptr constraints)
+    void init(constraints_ptr constraints, bool allow_init_to_default)
     {
         assert(constraints);
         assert(m_vars);
@@ -76,7 +76,7 @@ class individual {
 
         for (de::DVector::size_type j = 0; j < m_vars->size(); ++j)
         {
-            if( (*constraints)[j]->init_to_default() )
+            if( allow_init_to_default && (*constraints)[j]->init_to_default() )
             {
                 (*m_vars)[j] = (*constraints)[j]->get_default_value();
             }

@@ -46,7 +46,7 @@ class listener {
    *
    * @author adrian (12/4/2011)
    */
-  virtual void end() = 0;
+  virtual void end(size_t genCount, individual_ptr bestInd) = 0;
   /**
    * called if an exception was thrown during the optimization
    * process, and signals an error
@@ -122,7 +122,7 @@ typedef boost::shared_ptr<listener> listener_ptr;
 class null_listener : public listener {
  public:
   virtual void start() {}
-  virtual void end() {}
+  virtual void end(size_t genCount, individual_ptr bestInd) {}
   virtual void error() {}
   virtual void startGeneration(size_t genCount) {}
   virtual void endGeneration(size_t genCount, individual_ptr bestIndGen,

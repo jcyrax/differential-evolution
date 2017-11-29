@@ -144,8 +144,9 @@ class differential_evolution {
         {
             m_listener.start();
             individual_ptr bestIndIteration(m_bestInd);
+            size_t genCount;
 
-            for (size_t genCount = 0; m_terminationStrategy.check_termination(m_bestInd, genCount); ++genCount)
+            for (genCount = 0; m_terminationStrategy.check_termination(m_bestInd, genCount); ++genCount)
             {
                 m_listener.startGeneration(genCount);
                 for (size_t i = 0; i < m_popSize; ++i)
@@ -182,7 +183,7 @@ class differential_evolution {
                 m_listener.endGeneration(genCount, bestIndIteration, m_bestInd);
             }
 
-            m_listener.end();
+            m_listener.end(genCount, m_bestInd);
         }
         catch (const processors_exception&)
         {

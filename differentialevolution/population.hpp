@@ -61,7 +61,7 @@ class population : public population_base {
 
     init(popSize, varCount);
 
-    for (population::size_type i = 0; i < size(); ++i) at(i)->init(constraints);
+    for (population::size_type i = 0; i < size(); ++i) at(i)->init(constraints, i == 0 ? true : false);
   }
 
   /**
